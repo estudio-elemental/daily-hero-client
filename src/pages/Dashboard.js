@@ -77,7 +77,7 @@ export default function Dashboard({ token }) {
               onClick={() => startFight(m.id)}
               disabled={loading}
             >
-              {m.name} (Lv {m.level}) - EXP: {m.exp_earn} | HP: {m.hp} | Atk: {m.attack} | Def: {m.defense}
+              {m.name} (Lv {m.level})
               {loading && ' (Iniciando luta...)'}
             </button>
           </li>

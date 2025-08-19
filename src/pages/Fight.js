@@ -57,7 +57,7 @@ export default function Fight({ token }) {
       </div>
       {fightData.winner ? (
         <div style={{textAlign:'center', marginTop:'20px'}}>
-          <h3>Vencedor: {fightData.winner}</h3>
+          <h3>Vencedor: {fightData.winner === 'hero' ? 'Herói' : 'Monstro'}</h3>
         </div>
       ) : (
         <div style={{textAlign:'center', marginTop:'20px'}}>
@@ -70,7 +70,7 @@ export default function Fight({ token }) {
               cursor: loading ? 'not-allowed' : 'pointer'
             }}
           >
-            {loading ? 'Lutando...' : 'Continuar Luta'}
+            {loading ? 'Lutando...' : 'Ataque do ' + (fightData.turn === 'hero' ? 'Herói' : 'Monstro')}
           </button>
         </div>
       )}
