@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Register from './pages/Register';
@@ -23,13 +22,13 @@ function App() {
   // Se acabou de registrar, faz login automático
   React.useEffect(() => {
     if (pendingLogin) {
-      fetch('http://127.0.0.1:8000/api/auth/login', {
+      fetch('http://127.0.0.1:8000/api/auth/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pendingLogin)
       })
         .then(res => res.json())
-        .then(data => handleLogin(data.token))
+        .then(data => handleLogin(data.access))
         .catch(() => {});
     }
   }, [pendingLogin]);
@@ -40,7 +39,7 @@ function App() {
         <Route path="/register" element={<Register onRegister={handleRegister} />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/dashboard" element={token ? <Dashboard token={token} /> : <Navigate to="/login" />} />
-        <Route path="/fight/:monsterId" element={token ? <Fight token={token} /> : <Navigate to="/login" />} />
+        <Route path="/fight" element={token ? <Fight token={token} /> : <Navigate to="/login" />} />
         <Route path="*" element={<Navigate to={token ? "/dashboard" : "/login"} />} />
       </Routes>
     </Router>

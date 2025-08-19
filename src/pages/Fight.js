@@ -1,55 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Fight({ token }) {
-  const { monsterId } = useParams();
-  const [hero, setHero] = useState(null);
-  const [monster, setMonster] = useState(null);
-  const [fightId, setFightId] = useState(null);
-  const [fightData, setFightData] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fight_id = location.state?.fight_id;
+  // Removendo o fight_id dos dados iniciais da luta
+  const { fight_id: _, ...initialFightData } = location.state || {};
+  const [fightData, setFightData] = useState(initialFightData);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!token) return;
-    Promise.all([
-      fetch('http://127.0.0.1:8000/api/hero', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
-      fetch('http://127.0.0.1:8000/api/monster', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json())
-    ]).then(([hero, monsters]) => {
-      setHero(hero);
-      setMonster(monsters.find(m => m.id.toString() === monsterId));
-    }).catch(() => setError('Erro ao carregar dados.'));
-  }, [token, monsterId]);
-
-  const startFight = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const res = await fetch('http://127.0.0.1:8000/api/start-fight', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ monster_id: monsterId, hero_id: hero.id })
-      });
-      if (!res.ok) throw new Error('Erro ao iniciar luta');
-      const data = await res.json();
-      setFightId(data.fight_id);
-      setFightData({ hero_hp: hero.hp, monster_hp: monster.hp, turn: 'monster', winner: null });
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const doFight = async () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/fight', {
+      const res = await fetch('http://127.0.0.1:8000/api/fight/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ fight_id: fightId })
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ fight_id })
       });
       if (!res.ok) throw new Error('Erro ao lutar');
       const data = await res.json();
@@ -62,28 +34,45 @@ export default function Fight({ token }) {
   };
 
   if (!token) return <div>Faça login para acessar.</div>;
+  if (!fight_id) return <div>Luta não iniciada corretamente.</div>;
+  if (!fightData) return <div>Dados da luta não disponíveis.</div>;
   if (error) return <div style={{color:'red'}}>{error}</div>;
-  if (!hero || !monster) return <div>Carregando...</div>;
 
   return (
     <div>
-      <button onClick={() => navigate(-1)}>Voltar</button>
+      <button onClick={() => navigate('/dashboard')}>Voltar</button>
       <h2>Luta</h2>
-      <div style={{display:'flex',justifyContent:'space-between',maxWidth:500}}>
+      <div style={{display:'flex', justifyContent:'space-between', maxWidth:500, margin:'20px auto'}}>
         <div>
           <h3>Herói</h3>
-          <div>ID: {hero.id} | Level: {hero.level} | HP: {fightData ? fightData.hero_hp : hero.hp}</div>
+          <div>HP: {fightData.hero_hp}/{fightData.hero_max_hp}</div>
+        </div>
+        <div style={{textAlign:'center', marginTop:'20px'}}>
+          <div style={{fontWeight:'bold'}}>Turno: {fightData.turn === 'hero' ? 'Herói' : 'Monstro'}</div>
         </div>
         <div>
           <h3>Monstro</h3>
-          <div>{monster.name} (Lv {monster.level}) | HP: {fightData ? fightData.monster_hp : monster.hp}</div>
+          <div>HP: {fightData.monster_hp}/{fightData.monster_max_hp}</div>
         </div>
       </div>
-      {fightData && <div>Turno: {fightData.turn} {fightData.winner && <b>Vencedor: {fightData.winner}</b>}</div>}
-      {!fightId ? (
-        <button onClick={startFight} disabled={loading}>{loading ? 'Iniciando...' : 'Começar Luta'}</button>
+      {fightData.winner ? (
+        <div style={{textAlign:'center', marginTop:'20px'}}>
+          <h3>Vencedor: {fightData.winner}</h3>
+        </div>
       ) : (
-        <button onClick={doFight} disabled={loading || fightData?.winner}>{loading ? 'Lutando...' : 'Luta'}</button>
+        <div style={{textAlign:'center', marginTop:'20px'}}>
+          <button 
+            onClick={doFight} 
+            disabled={loading}
+            style={{
+              padding: '10px 20px',
+              fontSize: '16px',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? 'Lutando...' : 'Continuar Luta'}
+          </button>
+        </div>
       )}
     </div>
   );
