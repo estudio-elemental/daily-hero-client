@@ -28,20 +28,33 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pendingLogin)
       })
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) throw new Error('Login falhou após registro');
+          return res.json();
+        })
         .then(data => handleLogin(data.access))
-        .catch(() => {});
+        .catch(() => setPendingLogin(null));
     }
   }, [pendingLogin]);
 
   return (
     <Router>
       <Routes>
-        <Route path="/register" element={<Register onRegister={handleRegister} />} />
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route path="/dashboard" element={token ? <Dashboard token={token} /> : <Navigate to="/login" />} />
-        <Route path="/fight" element={token ? <Fight token={token} /> : <Navigate to="/login" />} />
-        <Route path="*" element={<Navigate to={token ? "/dashboard" : "/login"} />} />
+        <Route path="/register" element={
+          token ? <Navigate to="/dashboard" /> : <Register onRegister={handleRegister} />
+        } />
+        <Route path="/login" element={
+          token ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />
+        } />
+        <Route path="/dashboard" element={
+          token ? <Dashboard token={token} /> : <Navigate to="/login" />
+        } />
+        <Route path="/fight" element={
+          token ? <Fight token={token} /> : <Navigate to="/login" />
+        } />
+        <Route path="*" element={
+          <Navigate to={token ? "/dashboard" : "/login"} />
+        } />
       </Routes>
     </Router>
   );
