@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Fight from './pages/Fight';
+import { API_BASE_URL } from './config';
 
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
@@ -22,7 +23,7 @@ function App() {
   // Se acabou de registrar, faz login automático
   React.useEffect(() => {
     if (pendingLogin) {
-      fetch('http://127.0.0.1:8000/api/auth/login/', {
+      fetch(`${API_BASE_URL}/api/auth/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pendingLogin)

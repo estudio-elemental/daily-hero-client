@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 export default function Dashboard({ token }) {
   const [hero, setHero] = useState(null);
@@ -10,13 +11,13 @@ export default function Dashboard({ token }) {
 
   useEffect(() => {
     if (!token) return;
-    fetch('http://127.0.0.1:8000/api/hero/', {
+    fetch(`${API_BASE_URL}/api/hero/`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(setHero)
       .catch(() => setError('Erro ao carregar herói.'));
-    fetch('http://127.0.0.1:8000/api/monsters/', {
+    fetch(`${API_BASE_URL}/api/monsters/`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -29,7 +30,7 @@ export default function Dashboard({ token }) {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/start-fight/', {
+      const res = await fetch(`${API_BASE_URL}/api/start-fight/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
