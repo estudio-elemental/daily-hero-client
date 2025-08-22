@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import '../styles/auth.css';
 
 export default function Login({ onLogin }) {
   const [form, setForm] = useState({ username: '', password: '' });
@@ -34,8 +35,8 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+    <div className="auth-container">
+      <form onSubmit={handleSubmit} className="auth-form">
         <h2>Login</h2>
         <input 
           name="username" 
@@ -43,7 +44,7 @@ export default function Login({ onLogin }) {
           value={form.username} 
           onChange={handleChange} 
           required 
-          style={{ padding: '8px' }}
+          className="auth-input"
         />
         <input 
           name="password" 
@@ -52,38 +53,23 @@ export default function Login({ onLogin }) {
           value={form.password} 
           onChange={handleChange} 
           required 
-          style={{ padding: '8px' }}
+          className="auth-input"
         />
         <button 
           type="submit" 
           disabled={loading}
-          style={{ 
-            padding: '10px', 
-            backgroundColor: '#007bff', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1
-          }}
+          className="auth-button"
         >
           {loading ? 'Entrando...' : 'Entrar'}
         </button>
-        {error && <div style={{color:'red', textAlign: 'center'}}>{error}</div>}
+        {error && <div className="auth-error">{error}</div>}
       </form>
       
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+      <div className="auth-switch">
         <p>Não tem uma conta?</p>
         <button 
           onClick={() => navigate('/register')}
-          style={{ 
-            padding: '8px 16px',
-            backgroundColor: '#28a745',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
+          className="auth-switch-button"
         >
           Registrar-se
         </button>

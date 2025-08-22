@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { fetchWithAuth, handleApiError } from '../utils/api';
+import '../styles/dashboard.css';
 
 export default function Dashboard({ token, onLogout }) {
   const [hero, setHero] = useState(null);
@@ -84,105 +85,51 @@ export default function Dashboard({ token, onLogout }) {
   };
 
   if (!token) return <div className="message">Faça login para acessar.</div>;
-  if (!hero || !monsters) return <div style={{ textAlign: 'center', padding: '20px' }}>Carregando...</div>;
-  if (error) return <div style={{ color: '#e74c3c', textAlign: 'center', padding: '20px' }}>{error}</div>;
+  if (!hero || !monsters) return <div className="message">Carregando...</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'flex-end', 
-        marginBottom: '20px' 
-      }}>
+    <div className="dashboard-container">
+      <div className="header-container">
         <button 
           onClick={handleLogout}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#e74c3c',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
+          className="logout-button"
         >
           Sair
         </button>
       </div>
 
-      <div style={{
-        backgroundColor: '#f8f9fa',
-        padding: '20px',
-        borderRadius: '8px',
-        marginBottom: '20px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <h2 style={{ color: '#2c3e50', marginBottom: '15px' }}>Seu Herói</h2>
-        <div style={{ 
-          display: 'flex', 
-          gap: '20px',
-          fontSize: '16px',
-          color: '#34495e'
-        }}>
-          <div>Nível: {hero.level}</div>
-          <div>
-            HP: <span style={{ color: '#e74c3c' }}>{hero.hp}</span>/<span style={{ color: '#27ae60' }}>{hero.max_hp}</span>
-          </div>
+      <div className="hero-card">
+        <h2>Seu Herói</h2>
+        <div className="hero-stats">
+          <p>Nome: {hero.name}</p>
+          <p>HP: {hero.hp}</p>
+          <p>Ataque: {hero.attack}</p>
+          <p>Defesa: {hero.defense}</p>
         </div>
       </div>
 
-      <h2 style={{ color: '#2c3e50', marginBottom: '15px' }}>Monstros Disponíveis</h2>
-      
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-        gap: '15px'
-      }}>
-        {monsters && monsters.length > 0 ? monsters.map(m => (
-          <div key={m.id} style={{
-            backgroundColor: '#fff',
-            padding: '15px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px'
-          }}>
-            <h3 style={{ color: '#2c3e50', margin: 0 }}>{m.name}</h3>
-            <div style={{ fontSize: '14px', color: '#34495e' }}>
-              <div>Nível: {m.level}</div>
-              <div>HP: {m.hp}</div>
-              <div>Ataque: {m.attack}</div>
-              <div>Defesa: {m.defense}</div>
-              <div>EXP: {m.exp_earn}</div>
+      <div>
+        <h2>Monstros Disponíveis</h2>
+        <div className="monsters-grid">
+          {monsters.map(monster => (
+            <div key={monster.id} className="monster-card">
+              <h3>{monster.name}</h3>
+              <div className="monster-stats">
+                <p>HP: {monster.hp}</p>
+                <p>Ataque: {monster.attack}</p>
+                <p>Defesa: {monster.defense}</p>
+              </div>
+              <button
+                onClick={() => startFight(monster.id)}
+                disabled={loading}
+                className="fight-button"
+              >
+                {loading ? 'Iniciando...' : 'Lutar!'}
+              </button>
             </div>
-            <button 
-              onClick={() => startFight(m.id)}
-              disabled={loading}
-              style={{
-                marginTop: '10px',
-                padding: '10px',
-                backgroundColor: '#e74c3c',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                transition: 'all 0.2s ease'
-              }}
-            >
-              {loading ? 'Iniciando luta...' : 'Lutar!'}
-            </button>
-          </div>
-        )) : (
-          <div style={{ 
-            gridColumn: '1 / -1', 
-            textAlign: 'center', 
-            padding: '20px',
-            color: '#7f8c8d'
-          }}>
-            Nenhum monstro disponível no momento.
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     </div>
   );

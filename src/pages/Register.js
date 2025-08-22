@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import '../styles/auth.css';
 
 export default function Register({ onRegister }) {
   const [form, setForm] = useState({
@@ -26,7 +27,7 @@ export default function Register({ onRegister }) {
       const res = await fetch(`${API_BASE_URL}/api/auth/register/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)  // Enviando o formulário completo, incluindo password2
+        body: JSON.stringify(form)
       });
       
       if (!res.ok) {
@@ -44,8 +45,8 @@ export default function Register({ onRegister }) {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+    <div className="auth-container">
+      <form onSubmit={handleSubmit} className="auth-form">
         <h2>Registrar</h2>
         <input 
           name="username" 
@@ -53,7 +54,7 @@ export default function Register({ onRegister }) {
           value={form.username} 
           onChange={handleChange} 
           required 
-          style={{ padding: '8px' }}
+          className="auth-input"
         />
         <input 
           name="email" 
@@ -62,7 +63,7 @@ export default function Register({ onRegister }) {
           value={form.email} 
           onChange={handleChange} 
           required 
-          style={{ padding: '8px' }}
+          className="auth-input"
         />
         <input 
           name="first_name" 
@@ -70,7 +71,7 @@ export default function Register({ onRegister }) {
           value={form.first_name} 
           onChange={handleChange} 
           required 
-          style={{ padding: '8px' }}
+          className="auth-input"
         />
         <input 
           name="last_name" 
@@ -78,7 +79,7 @@ export default function Register({ onRegister }) {
           value={form.last_name} 
           onChange={handleChange} 
           required 
-          style={{ padding: '8px' }}
+          className="auth-input"
         />
         <input 
           name="password" 
@@ -87,7 +88,7 @@ export default function Register({ onRegister }) {
           value={form.password} 
           onChange={handleChange} 
           required 
-          style={{ padding: '8px' }}
+          className="auth-input"
         />
         <input 
           name="password2" 
@@ -96,41 +97,27 @@ export default function Register({ onRegister }) {
           value={form.password2} 
           onChange={handleChange} 
           required 
-          style={{ padding: '8px' }}
+          className="auth-input"
         />
         <button 
           type="submit" 
           disabled={loading}
-          style={{ 
-            padding: '10px', 
-            backgroundColor: '#28a745', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1
-          }}
+          className="auth-button"
         >
           {loading ? 'Registrando...' : 'Registrar'}
         </button>
-        {error && <div style={{color:'red', textAlign: 'center'}}>{error}</div>}
-        <div style={{ textAlign: 'center', marginTop: '10px' }}>
-          <button 
-            type="button"
-            onClick={() => navigate('/login')}
-            style={{ 
-              padding: '8px 16px',
-              backgroundColor: '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Voltar para Login
-          </button>
-        </div>
+        {error && <div className="auth-error">{error}</div>}
       </form>
+
+      <div className="auth-switch">
+        <p>Já tem uma conta?</p>
+        <button 
+          onClick={() => navigate('/login')}
+          className="auth-switch-button"
+        >
+          Voltar para Login
+        </button>
+      </div>
     </div>
   );
 }
