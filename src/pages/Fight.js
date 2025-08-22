@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { fetchWithAuth, handleApiError } from '../utils/api';
 import '../styles/fight.css';
@@ -84,6 +84,9 @@ export default function Fight({ token, onLogout }) {
         {/* Herói */}
         <div className="character-info">
           <h3 className="character-title">Herói</h3>
+          <div className="character-image-fallback">
+            H
+          </div>
           <div className="health-bar">
             <div 
               className="health-bar-fill"
@@ -106,6 +109,21 @@ export default function Fight({ token, onLogout }) {
         {/* Monstro */}
         <div className="character-info">
           <h3 className="character-title">Monstro</h3>
+          {location.state?.monster_image_url ? (
+            <img 
+              src={location.state.monster_image_url} 
+              alt="Monstro" 
+              className="character-image"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+          ) : (
+            <div className="character-image-fallback">
+              M
+            </div>
+          )}
           <div className="health-bar">
             <div 
               className="health-bar-fill"
@@ -122,9 +140,14 @@ export default function Fight({ token, onLogout }) {
       </div>
 
       {fightData.winner ? (
-        <div className="winner-message">
-          Vencedor: {fightData.winner}!
-        </div>
+        <>
+          <div className="winner-message">
+            Vencedor: {fightData.winner}!
+          </div>
+          <Link to="/dashboard" className="return-link">
+            Retornar ao Dashboard
+          </Link>
+        </>
       ) : (
         <button
           onClick={doFight}

@@ -65,6 +65,8 @@ export default function Dashboard({ token, onLogout }) {
       if (!res.ok) throw { status: res.status, message: 'Erro ao iniciar luta' };
       
       const data = await res.json();
+      const monster = monsters.find(m => m.id === monsterId);
+      
       navigate('/fight', { 
         state: { 
           fight_id: data.fight_id,
@@ -73,7 +75,8 @@ export default function Dashboard({ token, onLogout }) {
           turn: data.turn,
           winner: data.winner,
           hero_max_hp: data.hero_max_hp,
-          monster_max_hp: data.monster_max_hp
+          monster_max_hp: data.monster_max_hp,
+          monster_image_url: monster?.image_url
         } 
       });
     } catch (err) {
@@ -101,9 +104,12 @@ export default function Dashboard({ token, onLogout }) {
 
       <div className="hero-card">
         <h2>Seu Herói</h2>
+        <div className="hero-level">
+          Nível {hero.level}
+        </div>
         <div className="hero-stats">
           <p>Nome: {hero.name}</p>
-          <p>HP: {hero.hp}</p>
+          <p className="hero-hp">HP: {hero.hp} / {hero.max_hp}</p>
           <p>Ataque: {hero.attack}</p>
           <p>Defesa: {hero.defense}</p>
         </div>
@@ -114,6 +120,21 @@ export default function Dashboard({ token, onLogout }) {
         <div className="monsters-grid">
           {monsters.map(monster => (
             <div key={monster.id} className="monster-card">
+              {monster.image_url ? (
+                <img 
+                  src={monster.image_url} 
+                  alt={monster.name} 
+                  className="monster-image"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+              ) : (
+                <div className="monster-image-fallback">
+                  {monster.name[0]}
+                </div>
+              )}
               <h3>{monster.name}</h3>
               <div className="monster-stats">
                 <p>HP: {monster.hp}</p>
