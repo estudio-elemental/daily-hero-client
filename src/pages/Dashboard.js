@@ -3,12 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { fetchWithAuth, handleApiError } from '../utils/api';
 
-export default function Dashboard({ token }) {
+export default function Dashboard({ token, onLogout }) {
   const [hero, setHero] = useState(null);
   const [monsters, setMonsters] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    onLogout();
+    navigate('/login');
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -84,6 +89,26 @@ export default function Dashboard({ token }) {
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'flex-end', 
+        marginBottom: '20px' 
+      }}>
+        <button 
+          onClick={handleLogout}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#e74c3c',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Sair
+        </button>
+      </div>
+
       <div style={{
         backgroundColor: '#f8f9fa',
         padding: '20px',

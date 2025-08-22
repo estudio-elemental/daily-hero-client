@@ -20,6 +20,11 @@ function App() {
     setPendingLogin(null);
   };
 
+  const handleLogout = () => {
+    setToken(null);
+    localStorage.removeItem('token');
+  };
+
   // Se acabou de registrar, faz login automático
   React.useEffect(() => {
     if (pendingLogin) {
@@ -47,14 +52,12 @@ function App() {
           token ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />
         } />
         <Route path="/dashboard" element={
-          token ? <Dashboard token={token} /> : <Navigate to="/login" />
+          token ? <Dashboard token={token} onLogout={handleLogout} /> : <Navigate to="/login" />
         } />
         <Route path="/fight" element={
-          token ? <Fight token={token} /> : <Navigate to="/login" />
+          token ? <Fight token={token} onLogout={handleLogout} /> : <Navigate to="/login" />
         } />
-        <Route path="*" element={
-          <Navigate to={token ? "/dashboard" : "/login"} />
-        } />
+        <Route path="/" element={<Navigate to={token ? "/dashboard" : "/login"} />} />
       </Routes>
     </Router>
   );

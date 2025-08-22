@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { fetchWithAuth, handleApiError } from '../utils/api';
 
-export default function Fight({ token }) {
+export default function Fight({ token, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
   const fight_id = location.state?.fight_id;
@@ -37,6 +37,11 @@ export default function Fight({ token }) {
     }
   };
 
+  const handleLogout = () => {
+    onLogout();
+    navigate('/login');
+  };
+
   if (!token) return <div className="message">Faça login para acessar.</div>;
   if (!fight_id) return <div className="message">Luta não iniciada corretamente.</div>;
   if (!fightData) return <div className="message">Dados da luta não disponíveis.</div>;
@@ -57,20 +62,39 @@ export default function Fight({ token }) {
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <button 
-        onClick={() => navigate('/dashboard')}
-        style={{
-          padding: '8px 16px',
-          backgroundColor: '#34495e',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          marginBottom: '20px'
-        }}
-      >
-        ← Voltar para o Dashboard
-      </button>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: '20px' 
+      }}>
+        <button 
+          onClick={() => navigate('/dashboard')}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#34495e',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          ← Voltar para o Dashboard
+        </button>
+        <button 
+          onClick={handleLogout}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#e74c3c',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Sair
+        </button>
+      </div>
 
       <h2 style={{ color: '#2c3e50', textAlign: 'center', marginBottom: '30px' }}>Arena de Combate</h2>
 
