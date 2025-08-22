@@ -4,6 +4,17 @@
   padding: 20px;
 }
 
+.top-error {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+}
+
 .header-container {
   display: flex;
   justify-content: flex-end;
@@ -35,6 +46,10 @@
 .hero-hp {
   color: #27ae60;
   font-weight: 500;
+}
+
+.hero-hp.zero {
+  color: #e74c3c;
 }
 
 .monsters-grid {

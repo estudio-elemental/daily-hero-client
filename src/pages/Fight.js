@@ -49,7 +49,7 @@ export default function Fight({ token, onLogout }) {
   if (error) return <div className="error-message">{error}</div>;
 
   const calculateHealthPercentage = (current, max) => {
-    return (current / max) * 100;
+    return (Math.max(0, current) / max) * 100;
   };
 
   const getHealthColor = (percentage) => {
@@ -97,7 +97,7 @@ export default function Fight({ token, onLogout }) {
             />
           </div>
           <div className="health-text">
-            {fightData.hero_hp} / {fightData.hero_max_hp} HP
+            {Math.max(0, fightData.hero_hp)} / {fightData.hero_max_hp} HP
           </div>
         </div>
 
@@ -134,7 +134,7 @@ export default function Fight({ token, onLogout }) {
             />
           </div>
           <div className="health-text">
-            {fightData.monster_hp} / {fightData.monster_max_hp} HP
+            {Math.max(0, fightData.monster_hp)} / {fightData.monster_max_hp} HP
           </div>
         </div>
       </div>

@@ -62,7 +62,13 @@ export default function Dashboard({ token, onLogout }) {
         })
       });
       
-      if (!res.ok) throw { status: res.status, message: 'Erro ao iniciar luta' };
+      if (!res.ok) {
+        const errorData = await res.json();
+        if (res.status === 400 && errorData.error === 'Hero is not alive') {
+          throw { status: 400, message: 'Seu herói está sem HP para lutar! Ele precisa dormir para se recuperar.' };
+        }
+        throw { status: res.status, message: 'Erro ao iniciar luta' };
+      }
       
       const data = await res.json();
       const monster = monsters.find(m => m.id === monsterId);
@@ -89,10 +95,11 @@ export default function Dashboard({ token, onLogout }) {
 
   if (!token) return <div className="message">Faça login para acessar.</div>;
   if (!hero || !monsters) return <div className="message">Carregando...</div>;
-  if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="dashboard-container">
+      {error && <div className="top-error">{error}</div>}
+      
       <div className="header-container">
         <button 
           onClick={handleLogout}
@@ -109,9 +116,9 @@ export default function Dashboard({ token, onLogout }) {
         </div>
         <div className="hero-stats">
           <p>Nome: {hero.name}</p>
-          <p className="hero-hp">HP: {hero.hp} / {hero.max_hp}</p>
-          <p>Ataque: {hero.attack}</p>
-          <p>Defesa: {hero.defense}</p>
+          <p className={`hero-hp ${Math.max(0, hero.hp) === 0 ? 'zero' : ''}`}>
+            HP: {Math.max(0, hero.hp)} / {hero.max_hp}
+          </p>
         </div>
       </div>
 
@@ -137,7 +144,7 @@ export default function Dashboard({ token, onLogout }) {
               )}
               <h3>{monster.name}</h3>
               <div className="monster-stats">
-                <p>HP: {monster.hp}</p>
+                <p>HP: {Math.max(0, monster.hp)}</p>
                 <p>Ataque: {monster.attack}</p>
                 <p>Defesa: {monster.defense}</p>
               </div>
