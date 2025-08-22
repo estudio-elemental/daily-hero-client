@@ -68,7 +68,7 @@ export default function Fight({ token, onLogout }) {
           onClick={() => navigate('/dashboard')}
           className="back-button"
         >
-          ← Voltar para o Dashboard
+          ← Fugir
         </button>
         <button 
           onClick={handleLogout}
